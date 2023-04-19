@@ -80,7 +80,7 @@ RUN pip install --no-cache-dir \
     torch==${PYTORCH_VERSION} \
     torchvision==${TORCHVISION_VERSION} \
     -f https://download.pytorch.org/whl/${PYTORCH_VERSION/*+/}/torch_stable.html
-RUN pip install --no-cache-dir pytorch_lightning==${PYTORCH_LIGHTNING_VERSION}
+RUN pip install --no-cache-dir pytorch-lightning==${PYTORCH_LIGHTNING_VERSION}
 
 RUN pip install --no-cache-dir future typing packaging
 RUN pip install --no-cache-dir \

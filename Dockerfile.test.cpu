@@ -4,26 +4,33 @@ FROM ubuntu:${UBUNTU_VERSION}
 # Arguments for the build. UBUNTU_VERSION needs to be repeated because
 # the first usage only applies to the FROM tag.
 ARG UBUNTU_VERSION=20.04
-ARG MPI_KIND=OpenMPI
-ARG PYTHON_VERSION=3.6
+# ARG MPI_KIND=OpenMPI
+ARG MPI_KIND=ONECCL
+ARG PYTHON_VERSION=3.8
 ARG GPP_VERSION=7
 # NOTE: keep versions in sync with setup.py extras_require{'dev'}:
-ARG TENSORFLOW_PACKAGE=tensorflow-cpu==1.15.0
-ARG KERAS_PACKAGE=keras==2.2.4
-ARG PYTORCH_PACKAGE=torch==1.2.0+cpu
-ARG PYTORCH_LIGHTNING_PACKAGE=pytorch_lightning==0.7.6
-ARG TORCHVISION_PACKAGE=torchvision==0.4.0+cpu
-ARG MXNET_PACKAGE=mxnet==1.5.0
-ARG PYSPARK_PACKAGE=pyspark==2.4.7
+ARG TENSORFLOW_PACKAGE=tensorflow-cpu==2.11.0
+ARG KERAS_PACKAGE=keras==2.11.0
+ARG PYTORCH_PACKAGE=torch==1.13.0+cpu
+ARG PYTORCH_LIGHTNING_PACKAGE=pytorch-lightning==1.5.9
+ARG TORCHVISION_PACKAGE=torchvision==0.14.0+cpu
+ARG MXNET_PACKAGE=mxnet==1.9.1
+ARG PYSPARK_PACKAGE=pyspark==3.3.1
 # if SPARK_PACKAGE is set, installs Spark into /spark from the tgz archive
 # if SPARK_PACKAGE is a preview version, installs PySpark from the tgz archive
 # see https://archive.apache.org/dist/spark/ for available packages, version must match PYSPARK_PACKAGE
-ARG SPARK_PACKAGE=spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz
-ARG CCL_PACKAGE=master
-ARG HOROVOD_BUILD_FLAGS=""
+ARG SPARK_PACKAGE=spark-3.3.1/spark-3.3.1-bin-hadoop2.tgz
+# ARG HOROVOD_BUILD_FLAGS=HOROVOD_WITH_MPI=1
+ARG HOROVOD_BUILD_FLAGS=HOROVOD_WITH_GLOO=1
+# ARG HOROVOD_BUILD_FLAGS="HOROVOD_WITH_GLOO=1 HOROVOD_WITH_MPI=1"
+# ARG HOROVOD_BUILD_FLAGS="HOROVOD_WITH_MPI=1"
+# ARG HOROVOD_BUILD_FLAGS="HOROVOD_WITH_GLOO=1"
+# ARG CCL_PACKAGE=master
+ARG CCL_PACKAGE=2021.8
 
 # to avoid interaction with apt-get
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
 # Set default shell to /bin/bash
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
@@ -111,7 +118,7 @@ RUN if [[ ${MPI_KIND} == "OpenMPI" ]]; then \
             rm /tmp/oneccl.tar.gz && rm -Rf /tmp/oneCCL-${CCL_PACKAGE} && \
             sed -i 's/if \[ -z \"\${I_MPI_ROOT}\" \]/if [ -z \"${I_MPI_ROOT:-}\" ]/g' /usr/local/oneccl/env/setvars.sh && \
             sed -i 's/ \$1/ \${1:-}/g' /usr/local/oneccl/env/setvars.sh && \
-            echo ". /usr/local/oneccl/env/setvars.sh" > /oneccl_env && \
+            echo ". /usr/local/oneccl/env/setvars.sh --ccl-configuration=cpu" > /oneccl_env && \
             chmod +x /oneccl_env && \
             echo "export CCL_ATL_TRANSPORT=ofi; \
                   export HOROVOD_CCL_CACHE=1; \
@@ -239,6 +246,9 @@ RUN if [[ ${MPI_KIND} == "ONECCL" ]]; then \
     bash -c "${HOROVOD_BUILD_FLAGS} HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=1 HOROVOD_WITH_MXNET=1 pip install --no-cache-dir -v $(ls /horovod/dist/horovod-*.tar.gz)[spark,ray]"
 
 # Show the effective python package version to easily spot version differences
+RUN pip install --force-reinstall ${PYTORCH_LIGHTNING_PACKAGE}
+RUN pip uninstall -y torch
+RUN pip install --no-cache-dir --force-reinstall ${PYTORCH_PACKAGE} -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip freeze | sort
 
 # Assert installed package versions

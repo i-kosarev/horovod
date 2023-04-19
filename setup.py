@@ -175,7 +175,7 @@ ray_require_list = ['ray', 'aioredis<2', 'google-api-core<2.9.0']
 pytorch_spark_require_list = pytorch_require_list + \
                              spark_require_list + \
                              pyspark_require_list + \
-                             ['pytorch_lightning>=1.3.8,<1.5.10']
+                             ['pytorch-lightning>=1.3.8,<1.5.10']
 
 # all frameworks' dependencies
 all_frameworks_require_list = tensorflow_require_list + \
@@ -193,7 +193,7 @@ dev_require_list = ['tensorflow-cpu==2.2.0',
                     'keras==2.3.1',
                     'torch==1.4.0',
                     'torchvision==0.5.0',
-                    'pytorch_lightning>=1.3.8,<1.5.10',
+                    'pytorch-lightning>=1.3.8,<1.5.10',
                     'mxnet==1.5.0',
                     'pyspark==3.0.1'] + spark_require_list
 # torchvision 0.5.0 depends on torch==1.4.0

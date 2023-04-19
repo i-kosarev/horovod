@@ -61,7 +61,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
 
 # Install PyTorch, TensorFlow, Keras and MXNet
 RUN pip install --no-cache-dir torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
-RUN pip install --no-cache-dir pytorch_lightning==${PYTORCH_LIGHTNING_VERSION}
+RUN pip install --no-cache-dir pytorch-lightning==${PYTORCH_LIGHTNING_VERSION}
 
 RUN pip install --no-cache-dir future typing packaging
 RUN pip install --no-cache-dir \

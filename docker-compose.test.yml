@@ -146,7 +146,7 @@ services:
         SPARK_PACKAGE: spark-3.3.1/spark-3.3.1-bin-hadoop2.tgz
         HOROVOD_BUILD_FLAGS: HOROVOD_GPU_OPERATIONS=NCCL
         HOROVOD_MIXED_INSTALL: 0
-    runtime: nvidia
+    #runtime: nvidia
     # We plumb CUDA_VISIBLE_DEVICES instead of NVIDIA_VISIBLE_DEVICES because
     # the latter does not work in privileged mode that we use in the containers.
     environment:
