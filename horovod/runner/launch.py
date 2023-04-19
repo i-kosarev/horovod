@@ -668,6 +668,9 @@ def _run_static(args):
                               'runfunc', 'func', args.run_func)
 
         executable = args.executable or sys.executable
+        
+        print("RUNNING TASK IN launch.py")
+        
         command = [executable, '-m', 'horovod.runner.run_task', str(driver_ip), str(run_func_server_port)]
 
         try:

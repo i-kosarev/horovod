@@ -13,6 +13,10 @@
 # limitations under the License.
 # =============================================================================
 
+print("------------------------------------------")
+print("HELLO RUN_TASK")
+print("------------------------------------------") 
+
 import sys
 
 from horovod.runner.common.util.env import get_env_rank_and_size
@@ -26,6 +30,7 @@ def main(addr, port):
     except BaseException as e:
         sys.stderr.write("User function raise error: {error}".format(error=str(e)))
         raise e
+        # raise SystemExit("System Exit exception: {error}".format(error=str(e))
 
     rank, size = get_env_rank_and_size()
     put_data_into_kvstore(addr, port, 'runfunc_result', str(rank), ret_val)

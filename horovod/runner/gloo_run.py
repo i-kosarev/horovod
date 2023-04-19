@@ -328,6 +328,8 @@ def launch_gloo_elastic(command_or_func, exec_command, settings, env, get_common
         run_func_server_port = run_func_server.start_server()
         put_data_into_kvstore(server_ip, run_func_server_port, 'runfunc', 'func', command_or_func)
 
+        print("RUNNING TASK IN GLOO")
+
         command = [executable, '-m', 'horovod.runner.run_task', server_ip, str(run_func_server_port)]
     else:
         command = command_or_func
